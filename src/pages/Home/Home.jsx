@@ -1,24 +1,33 @@
 import { useEffect, useRef } from "react";
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
-import Header from "./components/Header/Header";
-import JobCard from "./components/JobCard/JobCard";
-import PostJobModal from "./components/PostJobModal/PostJobModal";
-import Search from "./components/Search/Search";
+import Header from "../../components/Header/Header";
+import JobCard from "../../components/JobCard/JobCard";
+import PostJobModal from "../../components/PostJobModal/PostJobModal";
+import Search from "../../components/Search/Search";
 import { useDispatch, useSelector } from "react-redux";
-import { getJobs } from "./redux/jobsSlice";
-import NoData from "./components/NoData/NoData";
+import { getJobs } from "../../redux/jobsSlice";
+import NoData from "../../components/NoData/NoData";
 import { Close as CloseIcon } from "@mui/icons-material";
-import ViewJobModal from "./components/ViewJobModal/ViewJobModal";
+import ViewJobModal from "../../components/ViewJobModal/ViewJobModal";
+import { auth } from "../../firebase/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate } from "react-router-dom";
 
-function App() {
+function Home() {
   const { jobs, isLoading, isFiltered } = useSelector((state) => state.jobs);
+  const [user, loading, error] = useAuthState(auth);
+
   const dispatch = useDispatch();
   const postJobModalRef = useRef();
   const viewJobModalRef = useRef();
+  const navigate = useNavigate();
   useEffect(() => {
     dispatch(getJobs());
   }, [dispatch]);
-  useEffect(() => console.log({ jobs, isLoading }), [jobs]);
+  useEffect(() => {
+    if (loading) return;
+    if (!user) navigate("/", { replace: true });
+  }, [loading, user]);
   return (
     <>
       <Header openModal={postJobModalRef.current?.openModal} />
@@ -64,4 +73,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;

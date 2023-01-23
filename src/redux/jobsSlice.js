@@ -13,7 +13,7 @@ const initialState = {
 export const getJobs = createAsyncThunk("jobsSlice/getJobs", async () => {
   const jobs = [];
   const getJobsRef = collection(db, "jobs");
-  const querySnap = await getDocs(getJobsRef);
+  const querySnap = await getDocs(getJobsRef).catch((err) => console.log(err));
   querySnap.docs.forEach((doc) => jobs.push({ id: doc.id, ...doc.data() }));
   return jobs;
 });
@@ -29,7 +29,7 @@ export const filterJobs = createAsyncThunk(
       where("type", "==", `${filter.type}`),
       where("location", "==", `${filter.location}`)
     );
-    const querySnap = await getDocs(q);
+    const querySnap = await getDocs(q).catch((err) => console.log(err));
     querySnap.docs.forEach((doc) => jobs.push({ id: doc.id, ...doc.data() }));
     return jobs;
   }
@@ -42,7 +42,7 @@ export const postJob = createAsyncThunk(
     const res = await addDoc(postJobRef, {
       ...job,
       postedOn: new Date().toISOString(),
-    });
+    }).catch((err) => console.log(err));
     thunkApi.dispatch(getJobs());
     return res.id;
   }
