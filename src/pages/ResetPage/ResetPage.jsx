@@ -1,4 +1,4 @@
 const ResetPage = () => {
-  return <div>ResetPage</div>;
+  return <div>Under Dev</div>;
 };
 export default ResetPage;

@@ -98,7 +98,7 @@ export default function LogInPage() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="/reset" variant="body2" color="#000">
+                <Link href="#" variant="body2" color="#000">
                   Forgot password?
                 </Link>
               </Grid>
