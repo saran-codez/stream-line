@@ -5,13 +5,13 @@ import {
   signOut,
 } from "firebase/auth";
 import { db, auth } from "./firebase";
-import { collection, getDoc, addDoc, query, where } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 
 export const loginWithEmailAndPassword = async (email, password) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
   } catch (err) {
-    console.log(err);
+    throw err.code.split("/")[1];
   }
 };
 
@@ -19,7 +19,8 @@ export const registerWithEmailAndPassword = async (
   firstName,
   lastName,
   email,
-  password
+  password,
+  recruiter
 ) => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -30,9 +31,10 @@ export const registerWithEmailAndPassword = async (
       lastName,
       authProvider: "local",
       email,
+      recruiter,
     });
   } catch (err) {
-    console.log(err);
+    throw err.code.split("/")[1];
   }
 };
 

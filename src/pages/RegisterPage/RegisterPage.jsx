@@ -13,6 +13,7 @@ import { registerWithEmailAndPassword } from "../../firebase/auth";
 import { auth } from "../../firebase/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
+import Checkbox from "@mui/material/Checkbox";
 
 const RegisterPage = () => {
   const initialState = {
@@ -20,13 +21,29 @@ const RegisterPage = () => {
     lastName: "",
     email: "",
     password: "",
+    recruiter: false,
   };
+  const [errorMsg, setErrorMsg] = useState("");
   const [user, loading, error] = useAuthState(auth);
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState(initialState);
   const handleChange = (e) => {
-    setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
+    switch (e.target.name) {
+      case "recruiter":
+        setUserDetails({
+          ...userDetails,
+          [e.target.name]: e.target.checked,
+        });
+        break;
+      default:
+        setUserDetails({
+          ...userDetails,
+          [e.target.name]: e.target.value,
+        });
+        break;
+    }
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     for (const field in userDetails) {
@@ -36,14 +53,18 @@ const RegisterPage = () => {
       userDetails.firstName,
       userDetails.lastName,
       userDetails.email,
-      userDetails.password
-    );
+      userDetails.password,
+      userDetails.recruiter
+    ).catch((err) => setErrorMsg(err));
     setUserDetails(initialState);
   };
+
   useEffect(() => {
     if (loading) return;
     if (user) navigate("/home", { replace: true });
-  }, [loading, user]);
+    if (error) console.log(error);
+  }, [loading, user, error, navigate]);
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -116,6 +137,28 @@ const RegisterPage = () => {
                 onChange={handleChange}
               />
             </Grid>
+            <Grid
+              item
+              xs={12}
+              container
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography>I am a recruiter</Typography>
+              <Checkbox name="recruiter" onChange={handleChange} />
+            </Grid>
+            {errorMsg ? (
+              <Grid
+                item
+                xs={12}
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                color="#ff0000"
+              >
+                {errorMsg}
+              </Grid>
+            ) : null}
           </Grid>
           <Button
             type="submit"

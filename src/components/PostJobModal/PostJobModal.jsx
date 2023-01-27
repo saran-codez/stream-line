@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Close as CloseButton } from "@mui/icons-material";
 import { makeStyles } from "tss-react/mui";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { postJob } from "../../redux/jobsSlice";
 
@@ -54,6 +54,7 @@ const PostJobModal = (props, ref) => {
   const { classes } = useStyle();
   const dispatch = useDispatch();
   const { isPosting } = useSelector((state) => state.jobs);
+  const { currentUser } = useSelector((state) => state.user);
   const initialState = {
     title: "",
     type: "Full Time",
@@ -84,7 +85,7 @@ const PostJobModal = (props, ref) => {
       if (typeof jobDetails[field] === "string" && !jobDetails[field]) return;
       else if (jobDetails.skills.length === 0) return;
     }
-    dispatch(postJob(jobDetails));
+    dispatch(postJob({ ...jobDetails, postedby: currentUser?.uid }));
     closeModal();
   };
 

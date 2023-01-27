@@ -20,7 +20,7 @@ export const getJobs = createAsyncThunk("jobsSlice/getJobs", async () => {
 
 // TODO: order jobs according to time posted in desc order to get recent posts
 export const filterJobs = createAsyncThunk(
-  "jobSlice/filterJobs",
+  "jobsSlice/filterJobs",
   async (filter) => {
     const jobs = [];
     const getJobsRef = collection(db, "jobs");
@@ -43,7 +43,6 @@ export const postJob = createAsyncThunk(
       ...job,
       postedOn: new Date().toISOString(),
     }).catch((err) => console.log(err));
-    thunkApi.dispatch(getJobs());
     return res.id;
   }
 );

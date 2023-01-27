@@ -1,13 +1,7 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
-import {
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
-  differenceInSeconds,
-  parseISO,
-} from "date-fns";
-import ViewJobModal from "../ViewJobModal/ViewJobModal";
+import { Link } from "react-router-dom";
+import { getTimeOfPost } from "../../assets/helpers/helper";
 
 const useStyle = makeStyles()((theme) => ({
   wrapper: {
@@ -40,21 +34,18 @@ const useStyle = makeStyles()((theme) => ({
 }));
 
 const JobCard = (props) => {
-  const { title, companyName, skills, postedOn, type, location, modalHandler } =
-    props;
+  const {
+    title,
+    companyName,
+    skills,
+    postedOn,
+    type,
+    location,
+    modalHandler,
+    recruiter,
+    id,
+  } = props;
   const { classes } = useStyle();
-  const getTimeOfPost = () => {
-    const parsed = parseISO(postedOn);
-    const diffInDays = differenceInDays(Date.now(), parsed);
-    const diffInHours = differenceInHours(Date.now(), parsed);
-    const diffInMin = differenceInMinutes(Date.now(), parsed);
-    const diffInSec = differenceInSeconds(Date.now(), parsed);
-
-    if (diffInDays > 0) return `${diffInDays}d`;
-    if (diffInHours > 0) return `${diffInHours}h`;
-    if (diffInMin > 0) return `${diffInMin}m`;
-    if (diffInSec > 0) return `${diffInSec}s`;
-  };
 
   return (
     <Box p={2} className={classes.wrapper}>
@@ -75,18 +66,33 @@ const JobCard = (props) => {
         <Grid item container direction="column" alignItems="flex-end" xs>
           <Grid item>
             <Typography variant="caption">
-              {getTimeOfPost()} ago | {type} | {location}
+              {getTimeOfPost(postedOn)} ago | {type} | {location}
             </Typography>
           </Grid>
           <Grid item>
-            <Button
-              style={{ fontWeight: "bold" }}
-              variant="outlined"
-              color="secondary"
-              onClick={() => modalHandler.openModal(props)}
-            >
-              Apply
-            </Button>
+            {recruiter ? (
+              <Button
+                style={{ fontWeight: "bold" }}
+                variant="outlined"
+                color="secondary"
+              >
+                <Link
+                  style={{ color: "black", textDecoration: "none" }}
+                  to={`./applications/${id}`}
+                >
+                  View applications
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                style={{ fontWeight: "bold" }}
+                variant="outlined"
+                color="secondary"
+                onClick={() => modalHandler.openModal(props)}
+              >
+                Apply
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Grid>

@@ -2,8 +2,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -21,19 +19,25 @@ export default function LogInPage() {
     email: "",
     password: "",
   };
+
+  const [errorMsg, setErrorMsg] = useState("");
   const [userState, setUserState] = useState(initialState);
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
+
   useEffect(() => {
     if (loading) return;
     if (user) navigate("/home");
-  }, [loading, user]);
+  }, [loading, user, navigate]);
+
   const handleChange = (e) => {
     setUserState({ ...userState, [e.target.name]: e.target.value });
   };
   const handleSubmit = (event) => {
     event.preventDefault();
-    loginWithEmailAndPassword(userState.email, userState.password);
+    loginWithEmailAndPassword(userState.email, userState.password).catch(
+      (err) => setErrorMsg(err)
+    );
     setUserState(initialState);
   };
   return (
@@ -87,7 +91,18 @@ export default function LogInPage() {
               id="password"
               autoComplete="off"
             />
-
+            {errorMsg ? (
+              <Grid
+                item
+                xs={12}
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                color="#ff0000"
+              >
+                {errorMsg}
+              </Grid>
+            ) : null}
             <Button
               type="submit"
               fullWidth

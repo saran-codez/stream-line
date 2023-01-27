@@ -1,5 +1,5 @@
 import { Box, Button, Select, MenuItem } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { makeStyles } from "tss-react/mui";
 import { filterJobs } from "../../redux/jobsSlice";
@@ -32,7 +32,7 @@ const Search = () => {
   };
 
   return (
-    <Box p={2} mt={-5} mb={2} className={classes.wrapper}>
+    <Box p={2} mt={-5} mb={2} className={classes.wrapper} alignItems="center">
       <Select value={filters.type} name="type" onChange={handleChange}>
         <MenuItem value="Full Time">Full Time</MenuItem>
         <MenuItem value="Part Time">Part Time</MenuItem>

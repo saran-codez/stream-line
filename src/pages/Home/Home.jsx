@@ -1,74 +1,49 @@
-import { useEffect, useRef } from "react";
-import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
-import Header from "../../components/Header/Header";
-import JobCard from "../../components/JobCard/JobCard";
-import PostJobModal from "../../components/PostJobModal/PostJobModal";
-import Search from "../../components/Search/Search";
+import { useEffect } from "react";
+
 import { useDispatch, useSelector } from "react-redux";
-import { getJobs } from "../../redux/jobsSlice";
-import NoData from "../../components/NoData/NoData";
-import { Close as CloseIcon } from "@mui/icons-material";
-import ViewJobModal from "../../components/ViewJobModal/ViewJobModal";
+
 import { auth } from "../../firebase/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import { getUserById } from "../../redux/userSlice";
 
 function Home() {
-  const { jobs, isLoading, isFiltered } = useSelector((state) => state.jobs);
   const [user, loading, error] = useAuthState(auth);
-
   const dispatch = useDispatch();
-  const postJobModalRef = useRef();
-  const viewJobModalRef = useRef();
   const navigate = useNavigate();
-  useEffect(() => {
-    dispatch(getJobs());
-  }, [dispatch]);
+  const { currentUser, isLoading } = useSelector((state) => state.user);
+
   useEffect(() => {
     if (loading) return;
-    if (!user) navigate("/", { replace: true });
-  }, [loading, user]);
+    if (!user) {
+      navigate("/", { replace: true });
+    }
+    if (user) {
+      dispatch(getUserById(user.uid));
+    }
+    if (error) console.log(error);
+  }, [loading, user, navigate, error, dispatch]);
+
+  useEffect(() => {
+    if (isLoading || !user) return;
+    if (currentUser.recruiter) {
+      navigate("/recruiter", { replace: true });
+    } else if (!currentUser.recruiter) navigate("/user", { replace: true });
+  }, [currentUser, navigate, isLoading, user]);
+
   return (
     <>
-      <Header openModal={postJobModalRef.current?.openModal} />
-      <PostJobModal ref={postJobModalRef} />
-      <ViewJobModal ref={viewJobModalRef} />
-      <ViewJobModal />
-      <Grid container justifyContent={"center"} mb={3}>
-        <Grid item xs={10}>
-          <Search />
-          {isFiltered && (
-            <Box mb={0.25}>
-              <Button
-                color="secondary"
-                onClick={() => dispatch(getJobs())}
-                style={{ cursor: "pointer" }}
-                my={1}
-                p={1}
-                border={1}
-              >
-                <Typography mr={0.25}>clear filters</Typography>
-                <CloseIcon />
-              </Button>
-            </Box>
-          )}
-          {isLoading ? (
-            <Box display="flex" justifyContent="center">
-              <CircularProgress />
-            </Box>
-          ) : jobs?.length === 0 ? (
-            <NoData />
-          ) : (
-            jobs?.map((job, idx) => (
-              <JobCard
-                {...job}
-                key={idx}
-                modalHandler={viewJobModalRef?.current}
-              />
-            ))
-          )}
-        </Grid>
-      </Grid>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+        width="100vw"
+      >
+        <CircularProgress />
+      </Box>
     </>
   );
 }

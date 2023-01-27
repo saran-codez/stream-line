@@ -10,8 +10,9 @@ import {
   Button,
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState, useRef } from "react";
 import { makeStyles } from "tss-react/mui";
+import ApplyJobModal from "../ApplyJobModal/ApplyJobModal";
 
 const useStyles = makeStyles()((theme) => ({
   skill__name: {
@@ -40,6 +41,7 @@ const ViewJobModal = (props, ref) => {
     setIsOpen(true);
   };
   const { classes } = useStyles();
+  const applyJobModalRef = useRef();
 
   const closeModal = () => {
     setIsOpen(false);
@@ -82,7 +84,7 @@ const ViewJobModal = (props, ref) => {
         <Box display="flex" gap={1} alignItems="center" my={0.5}>
           <Typography variant="body2">Company URL:</Typography>
           <Typography variant="body2">
-            <a href={jobData.companyUrl} target="_blank">
+            <a href={jobData.companyUrl} rel="noreferrer" target="_blank">
               {jobData.companyUrl}
             </a>
           </Typography>
@@ -100,12 +102,14 @@ const ViewJobModal = (props, ref) => {
           </Grid>
         </Box>
       </DialogContent>
+      <ApplyJobModal job={jobData} ref={applyJobModalRef} />
       <DialogActions>
         <Button
           variant="outlined"
           color="secondary"
-          href={jobData.link}
-          target="_blank"
+          onClick={() => {
+            applyJobModalRef.current?.openModal();
+          }}
         >
           Apply
         </Button>
