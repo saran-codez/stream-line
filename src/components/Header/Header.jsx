@@ -35,7 +35,18 @@ const Header = ({ email, recruiter }) => {
                 >
                   Post a job
                 </Button>
-              ) : null}
+              ) : (
+                <Button
+                  style={{ fontWeight: "bold" }}
+                  variant="contained"
+                  href="https://streamline-recommender.onrender.com/"
+                  target="_self"
+                  color="primary"
+                  disableElevation
+                >
+                  Recommend jobs
+                </Button>
+              )}
               <Button
                 style={{ fontWeight: "bold" }}
                 variant="contained"
